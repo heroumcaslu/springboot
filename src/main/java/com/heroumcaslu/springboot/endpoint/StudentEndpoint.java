@@ -6,60 +6,83 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.heroumcaslu.springboot.error.CustomErrorType;
-import com.heroumcaslu.springboot.model.Student;
+import com.heroumcaslu.springboot.models.Student;
+import com.heroumcaslu.springboot.repositories.StudentRepository;
 import com.heroumcaslu.springboot.util.DateUtil;
 
 @RestController
 @RequestMapping("students")
 public class StudentEndpoint {
 
-	private final DateUtil dateUtil;
+	private final StudentRepository studentDAO;
 
 	@Autowired
-	public StudentEndpoint(DateUtil dateUtil) {
+	public StudentEndpoint(StudentRepository studentDAO) {
 		// TODO Auto-generated constructor stub
-		this.dateUtil = dateUtil;
+		this.studentDAO = studentDAO;
 	}
 
 	// @RequestMapping(method = RequestMethod.GET, path = "/list")
-	@RequestMapping(method = RequestMethod.GET)
+	//@RequestMapping(method = RequestMethod.GET)
+	@GetMapping
 	public ResponseEntity<?> listAll() {
 
 		// System.out.println(dateUtil.formatLocalDateTimeToDatabaseStyle(LocalDateTime.now()));
-		return new ResponseEntity<>(Student.studentList, HttpStatus.OK);
+		return new ResponseEntity<>(studentDAO.findAll(), HttpStatus.OK);
 
 	}
 
-	@RequestMapping(method = RequestMethod.GET, path = "/{id}")
-	public ResponseEntity<?> getStudentById(@PathVariable("id") int id) {
+	//@RequestMapping(method = RequestMethod.GET, path = "/{id}")
+	@GetMapping(path = "/{id}")
+	public ResponseEntity<?> getStudentById(@PathVariable("id") Long id) {
 
-		Student student = new Student();
-		student.setId(id);
+		Student student = studentDAO.findOne(id);
 
-		int index = Student.studentList.indexOf(student);
-
-		if (index == -1) {
+		if (student == null) {
 
 			return new ResponseEntity<>(new CustomErrorType("Student not found"), HttpStatus.NOT_FOUND);
 
 		}
 
-		return new ResponseEntity<>(Student.studentList.get(index), HttpStatus.OK);
+		return new ResponseEntity<>(student, HttpStatus.OK);
 
 	}
 
-	@RequestMapping(method = RequestMethod.POST)
+	//Not idempotent
+	//@RequestMapping(method = RequestMethod.POST)
+	@PostMapping
 	public ResponseEntity<?> save(@RequestBody Student student) {
 
-		Student.studentList.add(student);
-		return new ResponseEntity<>(student, HttpStatus.OK);
+		return new ResponseEntity<>(studentDAO.save(student), HttpStatus.OK);
+
+	}
+	
+	//@RequestMapping(method = RequestMethod.DELETE)
+	@DeleteMapping(path = "/{id}")
+	public ResponseEntity<?> remove(@PathVariable Long id) {
+
+		studentDAO.delete(id);
+		return new ResponseEntity<>(HttpStatus.OK);
+
+	}
+	
+	//@RequestMapping(method = RequestMethod.PUT)
+	@PutMapping
+	public ResponseEntity<?> update(@RequestBody Student student) {
+
+		studentDAO.save(student);// com o id é atualizado, sem o id é criado
+		return new ResponseEntity<>(HttpStatus.OK);
 
 	}
 
