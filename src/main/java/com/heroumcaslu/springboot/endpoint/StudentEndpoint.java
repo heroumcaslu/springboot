@@ -56,6 +56,13 @@ public class StudentEndpoint {
 		return new ResponseEntity<>(studentDAO.findByName(name), HttpStatus.OK);
 		
 	}
+	
+	@GetMapping(path = "/findByNameIgnoreCase/{name}")
+	public ResponseEntity<?> findStudentByNameIgnoreCase(@PathVariable String name) {
+		
+		return new ResponseEntity<>(studentDAO.findByNameIgnoreCaseContaining(name), HttpStatus.OK);
+		
+	}
 
 	//Not idempotent
 	//@RequestMapping(method = RequestMethod.POST)
