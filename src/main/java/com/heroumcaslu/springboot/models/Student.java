@@ -1,14 +1,14 @@
 package com.heroumcaslu.springboot.models;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import javax.persistence.Entity;
 
 @Entity
 public class Student extends AbstractEntity {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7545970178820767127L;
 	private String name;
 	
 	public Student(String name) {
