@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.heroumcaslu.springboot.error.CustomErrorType;
+import com.heroumcaslu.springboot.error.ResourceNotFoundException;
 import com.heroumcaslu.springboot.models.Student;
 import com.heroumcaslu.springboot.repositories.StudentRepository;
 import com.heroumcaslu.springboot.util.DateUtil;
@@ -47,13 +48,9 @@ public class StudentEndpoint {
 	@GetMapping(path = "/{id}")
 	public ResponseEntity<?> getStudentById(@PathVariable("id") Long id) {
 
+		verifyIfStudentExists(id);
+		
 		Student student = studentDAO.findOne(id);
-
-		if (student == null) {
-
-			return new ResponseEntity<>(new CustomErrorType("Student not found"), HttpStatus.NOT_FOUND);
-
-		}
 
 		return new ResponseEntity<>(student, HttpStatus.OK);
 
@@ -72,6 +69,7 @@ public class StudentEndpoint {
 	@DeleteMapping(path = "/{id}")
 	public ResponseEntity<?> remove(@PathVariable Long id) {
 
+		verifyIfStudentExists(id);
 		studentDAO.delete(id);
 		return new ResponseEntity<>(HttpStatus.OK);
 
@@ -81,9 +79,21 @@ public class StudentEndpoint {
 	@PutMapping
 	public ResponseEntity<?> update(@RequestBody Student student) {
 
+		verifyIfStudentExists(student.getId());
 		studentDAO.save(student);// com o id é atualizado, sem o id é criado
 		return new ResponseEntity<>(HttpStatus.OK);
 
+	}
+	
+	//Método na camada de serviços
+	private void verifyIfStudentExists(Long id) {
+		
+		if (studentDAO.findOne(id) == null) {
+			
+			throw new ResourceNotFoundException("Student not found for id: "+id);
+			
+		}
+		
 	}
 
 }
