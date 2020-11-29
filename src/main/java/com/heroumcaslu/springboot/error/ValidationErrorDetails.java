@@ -2,23 +2,41 @@ package com.heroumcaslu.springboot.error;
 
 import javax.annotation.Generated;
 
-public class ResourceNotFoundDetails extends ErrorDetail {
+public class ValidationErrorDetails extends ErrorDetail {
+
+	private String field;
+	private String fieldMessage;
 
 	@Generated("SparkTools")
-	private ResourceNotFoundDetails(Builder builder) {
+	private ValidationErrorDetails(Builder builder) {
 		this.setTitle(builder.title);
 		this.setStatus(builder.status);
 		this.setDetail(builder.detail);
 		this.setTimestamp(builder.timestamp);
 		this.setDeveloperMessage(builder.developerMessage);
+		this.setField(builder.field);
+		this.setFieldMessage(builder.fieldMessage);
 	}
 
-	private ResourceNotFoundDetails() {
-		// TODO Auto-generated constructor stub
+	public String getField() {
+		return field;
+	}
+
+	public void setField(String field) {
+		this.field = field;
+	}
+
+	public String getFieldMessage() {
+		return fieldMessage;
+	}
+
+	public void setFieldMessage(String fieldMessage) {
+		this.fieldMessage = fieldMessage;
 	}
 
 	/**
-	 * Creates builder to build {@link ResourceNotFoundDetails}.
+	 * Creates builder to build {@link ValidationErrorDetails}.
+	 * 
 	 * @return created builder
 	 */
 	@Generated("SparkTools")
@@ -27,10 +45,12 @@ public class ResourceNotFoundDetails extends ErrorDetail {
 	}
 
 	/**
-	 * Builder to build {@link ResourceNotFoundDetails}.
+	 * Builder to build {@link ValidationErrorDetails}.
 	 */
 	@Generated("SparkTools")
 	public static final class Builder {
+		private String field;
+		private String fieldMessage;
 		private String title;
 		private int status;
 		private String detail;
@@ -65,8 +85,18 @@ public class ResourceNotFoundDetails extends ErrorDetail {
 			return this;
 		}
 
-		public ResourceNotFoundDetails build() {
-			return new ResourceNotFoundDetails(this);
+		public Builder withField(String field) {
+			this.field = field;
+			return this;
+		}
+
+		public Builder withFieldMessage(String fieldMessage) {
+			this.fieldMessage = fieldMessage;
+			return this;
+		}
+
+		public ValidationErrorDetails build() {
+			return new ValidationErrorDetails(this);
 		}
 	}
 
